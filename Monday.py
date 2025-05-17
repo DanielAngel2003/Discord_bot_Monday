@@ -46,5 +46,6 @@ client.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6
 To get sure that it works, when you run the code you should see something like:
 'Logged on as Monday#0282!'
 
+Review how to improve response
 """
 
