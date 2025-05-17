@@ -16,10 +16,6 @@ Package that allows to read json data. Most info in the web is JSON format.
 """
 
 salute = ['$hello','$hola','$bonjour']
-meme = ['A meme for monsieur/madame',
-        'Hot n Ready!!!', ' Someone said... MEME?', 'A MEME pleasure',
-        'MEMETASTIC!', 'THE MEME', 'MEME WARS!!!', '']
-
 
 # Searches for memes in the url
 def get_meme():
@@ -41,6 +37,12 @@ class MyClient(discord.Client):
     # Responding to messages
     # Called automatically every time there is a new mesage
     async def on_message(self, message):
+        # Variables to use
+        meme = [f'A meme for monsieur/madame {message.author.name}',
+        f'Hot n Ready, {message.author.name}!!!', ' Someone said... MEME?', 
+        f'A MEME pleasure, {message.author.name}', 'MEMETASTIC!', f'THE MEME HAS SPOKEN!!!', 
+        'MEME WARS!!!', f'ALL HAIL THE MEME, {message.author.name}!!!',]
+
         # If the bot sends the message, to avoid a loop
         if message.author == self.user:
             return
@@ -68,7 +70,7 @@ class MyClient(discord.Client):
         if any (His in message.content.lower() for His in salute):
             #For name, message.author.name
             #For mention (@DanSolo), message.author.mention
-            await message.channel.send(f'Hello, {message.author.mention}')
+            await message.channel.send(f'Hello, {message.author.name}!')
 
         if '$meme' in message.content.lower():
             await message.channel.send(random.choice(meme))
