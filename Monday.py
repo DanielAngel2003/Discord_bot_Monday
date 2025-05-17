@@ -14,6 +14,7 @@ json:
 Package that allows to read json data. Most info in the web is JSON format.
 """
 
+salute = ['$hello','$hola','$bonjour']
 
 # Class created to responde to common events
 class MyClient(discord.Client): 
@@ -29,7 +30,7 @@ class MyClient(discord.Client):
             return
         
         # If there is a message with the keyword $hello
-        if message.content.startswith('$hello'):
+        if any (His in message.content.lower() for His in salute):
             await message.channel.send('Hello World!')
 
 # Default settings for the bot
