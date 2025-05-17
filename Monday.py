@@ -1,6 +1,7 @@
 import discord
 import requests
 import json
+import random
 
 """
 discord:
@@ -15,6 +16,16 @@ Package that allows to read json data. Most info in the web is JSON format.
 """
 
 salute = ['$hello','$hola','$bonjour']
+meme = ['A meme for monsieur/madame',
+        'Hot n Ready!!!', ' Someone said... MEME?', 'A MEME pleasure',
+        'MEMETASTIC!', 'THE MEME', 'MEME WARS!!!', '']
+
+
+# Searches for memes in the url
+def get_meme():
+    response = requests.get('https://meme-api.com/gimme')
+    json_data = json.loads(response.text)
+    return json_data['url']
 
 # Class created to responde to common events
 class MyClient(discord.Client): 
@@ -55,7 +66,13 @@ class MyClient(discord.Client):
 
         # If there is a message with the keyword $hello
         if any (His in message.content.lower() for His in salute):
-            await message.channel.send('Hello, User')
+            #For name, message.author.name
+            #For mention (@DanSolo), message.author.mention
+            await message.channel.send(f'Hello, {message.author.mention}')
+
+        if '$meme' in message.content.lower():
+            await message.channel.send(random.choice(meme))
+            await message.channel.send(get_meme())
 
 # Default settings for the bot
 intents = discord.Intents.default() 
