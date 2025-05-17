@@ -19,6 +19,11 @@ salute = ['$hello','$hola','$bonjour']
 # Class created to responde to common events
 class MyClient(discord.Client): 
     # Called when login is successful
+    def __init__(self, *, intents, **options):
+        super().__init__(intents=intents, **options)
+        # Bot is on from the beggining
+        self.bot_on = True
+
     async def on_ready(self): 
         print('Logged on as {0}!'.format(self.user))
 
@@ -28,10 +33,29 @@ class MyClient(discord.Client):
         # If the bot sends the message, to avoid a loop
         if message.author == self.user:
             return
+
+        # Conditional to detect the 'Off' command for Monday
+        if 'monday off' in message.content.lower():
+            # Executes if string IN the message
+            self.bot_on = False
+            await message.channel.send('M.O.N.D.A.Y. Apagado')
+            return
+
+        # Conditional to detect the 'On' command for Monday
+        if 'monday on' in message.content.lower():
+            # Executes if string IN the message
+            self.bot_on = True
+            await message.channel.send('M.O.N.D.A.Y. Encendido')
+            return
         
+        # If the bot is off
+        if not self.bot_on:
+            # Ignores the message until it gets on
+            return
+
         # If there is a message with the keyword $hello
         if any (His in message.content.lower() for His in salute):
-            await message.channel.send('Hello World!')
+            await message.channel.send('Hello, User')
 
 # Default settings for the bot
 intents = discord.Intents.default() 
@@ -45,7 +69,7 @@ client.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6
 
 """
 To get sure that it works, when you run the code you should see something like:
-'Logged on as Monday#0282!'
+'Logged on as M.O.N.D.A.Y.#0282!'
 
 Review how to improve response
 """
