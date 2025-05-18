@@ -74,7 +74,10 @@ async def on_member_join(member):
 async def on_message(message):
     # If M.O.N.D.A.Y. is Off
     if not bot.bot_on:
-        # Ignores the message until it gets on
+        # Expects a command [Only 'On' should be used]
+        await bot.process_commands(message)
+
+        # Ignores other messages
         return
     
     ## Variables to use
