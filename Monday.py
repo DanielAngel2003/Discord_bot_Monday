@@ -16,6 +16,7 @@ Package that allows to read json data. Most info in the web is JSON format.
 """
 
 salute = ['$hello','$hola','$bonjour']
+banned_words = ['nigger', 'nigga', 'prieto']
 
 # Searches for memes in the url
 def get_meme():
@@ -31,11 +32,18 @@ class MyClient(discord.Client):
         # Bot is on from the beggining
         self.bot_on = True
 
-    async def on_ready(self): 
+    ### Setting in the bot
+    async def on_ready(self):
+        # Prints if the bot has logged in succesfully
         print('Logged on as {0}!'.format(self.user))
 
-    # Responding to messages
+    ### Member_joining
+    async def on_member_join(self, member):
+        await member.send(f'Hello there, {member.name}!')
+
+    ### Responding to messages
     # Called automatically every time there is a new mesage
+
     async def on_message(self, message):
         # Variables to use
         meme = [f'A meme for monsieur/madame {message.author.name}',
@@ -67,7 +75,7 @@ class MyClient(discord.Client):
             return
 
         # If there is a message with the keyword $hello
-        if any (His in message.content.lower() for His in salute):
+        if any(His in message.content.lower() for His in salute):
             #For name, message.author.name
             #For mention (@DanSolo), message.author.mention
             await message.channel.send(f'Hello, {message.author.name}!')
@@ -76,10 +84,19 @@ class MyClient(discord.Client):
             await message.channel.send(random.choice(meme))
             await message.channel.send(get_meme())
 
+        if any(Nos in message.content.lower() for Nos in banned_words):
+            # Deleting the message
+            await message.delete()
+            await message.channel.send(f'{message.author.mention}, YOU CAN\'T USE THE N WORD HERE!!!!')
+
+
 # Default settings for the bot
 intents = discord.Intents.default() 
+
 # Explicitely declare to interract with messages
 intents.message_content = True 
+# Explicitely declare to interact with member info
+intents.members = True
 
 # Calling of the MyClient class
 client = MyClient(intents=intents) 
