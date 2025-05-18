@@ -18,6 +18,8 @@ Package that allows to read json data. Most info in the web is JSON format.
 
 salute = ['$hello','$hola','$bonjour']
 banned_words = ['nigger', 'nigga', 'prieto']
+calls = ['oye monday', 'monday', 'hey monday', 'oye, monday', 'hey, monday', 'disculpa, monday']
+not_calls = ['monday ', 'monday help']
 
 # Default settings for the bot
 intents = discord.Intents.default() 
@@ -86,21 +88,16 @@ async def on_message(message):
     f'A MEME pleasure, {message.author.name}', 'MEMETASTIC!', f'THE MEME HAS SPOKEN!!!', 
     'MEME WARS!!!', f'ALL HAIL THE MEME, {message.author.name}!!!',]
     msg = message.content.lower() # The string of the message
+    answers = [f'At your service, {message.author.name}!', f'Yes, {message.author.name}?',
+    f'How can I help, {message.author.name}?', 'M.O.N.D.A.Y Reporting for Duty!!!',
+    'Did somebody call?', f'I\'m right here, {message.author.name}!']
 
     # If the bot sends the message, to avoid a loop
     if message.author == bot.user:
         return
 
-    # If there is a message with the keyword $hello
-    # this would be now a command
-    if any(His in msg for His in salute):
-        #For name, message.author.name
-        #For mention (@DanSolo), message.author.mention
-        pass
-        #await message.channel.send(f'Hello, {message.author.name}!')
-
     # command, for function
-    if '$meme' in msg:
+    if 'meme' in msg:
         await message.channel.send(random.choice(meme))
         await message.channel.send(get_meme())
 
@@ -109,6 +106,10 @@ async def on_message(message):
         # Deleting the message
         await message.delete()
         await message.channel.send(f'{message.author.mention}, YOU CAN\'T USE THE N WORD HERE!!!!')
+
+    if msg.startswith(tuple(calls)) and any(nope not in msg for nope in not_calls):
+        await message.channel.send(random.choice(answers))
+        await message.channel.send('If you need help with my commands, you can say \'Monday help\'')        
 
     # Once all the message content options are setted, we declare:
     await bot.process_commands(message)
