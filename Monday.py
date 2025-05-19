@@ -24,7 +24,15 @@ bot = commands.Bot(command_prefix='Monday ', intents=intents, case_insensitive=T
 
 @bot.event
 async def setup_hook():
-    await bot.load_extension('')
+    await bot.load_extension('monday_core')
+
+@bot.check
+async def globally_block_commands(ctx):
+    #'On' is only command to detect, even when M.O.N.D.A.Y. is off
+    if ctx.command.name == 'on':
+        return True
+    
+    return bot.bot_on
 
 #Running the bot with the token
 bot.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6ZgV4') 

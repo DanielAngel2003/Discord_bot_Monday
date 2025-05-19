@@ -1,5 +1,4 @@
 # archivo: monday_core.py
-import discord
 from discord.ext import commands
 import requests
 import json
@@ -73,7 +72,7 @@ class CoreCog(commands.Cog):
             await message.channel.send(random.choice(answers))
             await message.channel.send('If you need help with my commands, you can say \'Monday help\'')  
 
-        await self.bot.process_commands(message)
+        #await self.bot.process_commands(message)
     
     def get_meme(self):
         try:
@@ -84,7 +83,7 @@ class CoreCog(commands.Cog):
             return 'No meme, my dudes :c'
         
     @commands.command(name='hola', aliases=['hello','bonjour'])
-    async def greet(ctx):
+    async def greet(self, ctx):
         # Salutes back the person that saluted M.O.N.D.A.Y.
         await ctx.channel.send(f'Hello, {ctx.author.name}!')
 
@@ -103,5 +102,5 @@ class CoreCog(commands.Cog):
         await ctx.send('See you all when September ends.')
         await self.bot.close()
 
-def setup(bot):
-    bot.add_cog(CoreCog(bot))
+async def setup(bot):
+    await bot.add_cog(CoreCog(bot))
