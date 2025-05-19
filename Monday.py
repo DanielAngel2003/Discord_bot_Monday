@@ -1,8 +1,5 @@
+from discord.ext import commands
 import discord
-from discord.ext import commands # Optimización de comandos
-import requests
-import json
-import random
 
 """
 discord:
@@ -16,6 +13,31 @@ json:
 Package that allows to read json data. Most info in the web is JSON format.
 """
 
+# Default settings for the bot
+intents = discord.Intents.default() 
+# Explicitely declare to interract with messages
+intents.message_content = True 
+# Explicitely declare to interact with member info
+intents.members = True
+
+bot = commands.Bot(command_prefix='Monday ', intents=intents, case_insensitive=True)
+
+@bot.event
+async def setup_hook():
+    await bot.load_extension('')
+
+#Running the bot with the token
+bot.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6ZgV4') 
+# Replace with your own token
+
+"""
+To get sure that it works, when you run the code you should see something like:
+'Logged on as M.O.N.D.A.Y.#0282!'
+
+Review how to improve response
+"""
+
+"""
 banned_words = ['nigger', 'nigga', 'prieto']
 calls = ['oye monday', 'monday', 'hey monday', 'oye, monday', 'hey, monday', 'disculpa, monday']
 
@@ -148,16 +170,4 @@ async def sleep(ctx):
     await ctx.channel.send('See you all when September ends.')
     #Shuts down the bot entirely
     await bot.close()
-
-
-#Running the bot with the token
-bot.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6ZgV4') 
-# Replace with your own token
-
 """
-To get sure that it works, when you run the code you should see something like:
-'Logged on as M.O.N.D.A.Y.#0282!'
-
-Review how to improve response
-"""
-
