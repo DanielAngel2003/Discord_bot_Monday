@@ -16,10 +16,8 @@ json:
 Package that allows to read json data. Most info in the web is JSON format.
 """
 
-salute = ['$hello','$hola','$bonjour']
 banned_words = ['nigger', 'nigga', 'prieto']
 calls = ['oye monday', 'monday', 'hey monday', 'oye, monday', 'hey, monday', 'disculpa, monday']
-not_calls = ['monday ', 'monday help']
 
 # Default settings for the bot
 intents = discord.Intents.default() 
@@ -107,7 +105,9 @@ async def on_message(message):
         await message.delete()
         await message.channel.send(f'{message.author.mention}, YOU CAN\'T USE THE N WORD HERE!!!!')
 
-    if msg.startswith(tuple(calls)) and any(nope not in msg for nope in not_calls):
+    #keywords, avoid unnecesary messages
+    #'msg'.strip to verified exatly these
+    if msg.strip() in calls:
         await message.channel.send(random.choice(answers))
         await message.channel.send('If you need help with my commands, you can say \'Monday help\'')        
 
@@ -119,10 +119,10 @@ async def on_message(message):
 # Note: the variable for every command should be 'ctx' or 'message
 
 ### Command to salute
-@bot.command()
-async def hola(ctx):
+@bot.command(name='hola', aliases=['hello','bonjour'])
+async def greet(ctx):
     # Salutes back the person that saluted M.O.N.D.A.Y.
-    await ctx.channel.send(f'Hello there, {ctx.author.mention}!')
+    await ctx.channel.send(f'Hello, {ctx.author.name}!')
 
 ### Command for Turning On
 @bot.command()
@@ -140,6 +140,15 @@ async def off(ctx):
     bot.bot_on = False
     await ctx.channel.send('M.O.N.D.A.Y. Off')
     return
+
+### Command for Shuting down
+@bot.command()
+async def sleep(ctx):
+    #Command to detect the 'sleep' for M.O.N.D.A.Y.
+    await ctx.channel.send('See you all when September ends.')
+    #Shuts down the bot entirely
+    await bot.close()
+
 
 #Running the bot with the token
 bot.run('MTM3MzA3ODY1Nzc3NzY2ODEzOA.GiOmyL.QilIKuzchO-wBuZ5szBpk3i7Frz9udiXq6ZgV4') 
