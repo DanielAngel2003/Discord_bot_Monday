@@ -5,12 +5,6 @@ import discord
 discord:
 Library 'discord.py' works on with events (messages, e.g.)
 By definition: An event is something ypu listen for and then respond to.
-
-requests:
-Package that allows to make HTTP request to any URL.
-
-json:
-Package that allows to read json data. Most info in the web is JSON format.
 """
 
 # Default settings for the bot
@@ -26,6 +20,7 @@ bot = commands.Bot(command_prefix='Monday ', intents=intents, case_insensitive=T
 async def setup_hook():
     await bot.load_extension('monday_core')
 
+### Logic of On/Off bot
 @bot.check
 async def globally_block_commands(ctx):
     #'On' is only command to detect, even when M.O.N.D.A.Y. is off

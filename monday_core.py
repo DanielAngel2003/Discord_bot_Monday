@@ -16,35 +16,40 @@ json:
 Package that allows to read json data. Most info in the web is JSON format.
 """
 
-banned_words = ['nigger', 'nigga', 'prieto']
-calls = ['oye monday', 'monday', 'hey monday', 'oye, monday', 'hey, monday', 'disculpa, monday']
-
-
 #Se crea una clase para facilitar
 class CoreCog(commands.Cog):
     def __init__(self,bot):
         self.bot = bot
+        # Propiedad para mantenerse activo
         self.bot.bot_on = True
         self.calls = ['oye monday', 'monday', 'hey monday', 'oye, monday', 'hey, monday', 'disculpa, monday']
         self.banned_words = ['nigger', 'nigga', 'prieto']
 
+    ### Setting in the bot
     @commands.Cog.listener()
     async def on_ready(self):
-        #Inicialización
+        # Prints if the bot has logged in succesfully
         print(f'Logged on as {self.bot.user}!')
 
+    ### Member_joining
     @commands.Cog.listener()
     async def on_member_join(self,member):
+        # If M.O.N.D.A.Y. is Off
         if not self.bot.bot_on:
             return
+        
+        # Salutes the new user
         await member.send(f'Welcome, {member.name}')
 
+    ### Responding to messages
     @commands.Cog.listener()
     async def on_message(self,message):
-       
+        
+        # If the bot sends the message, to avoid a loop
         if message.author == self.bot.user:
             return
         
+        # If M.O.N.D.A.Y. is Off
         if not self.bot.bot_on:
             await self.process_commands(message)
             return
@@ -59,21 +64,26 @@ class CoreCog(commands.Cog):
         f'How can I help, {message.author.name}?', 'M.O.N.D.A.Y Reporting for Duty!!!',
         'Did somebody call?', f'I\'m right here, {message.author.name}!']
 
+        # Send memes with the keyword 'meme'
         if 'meme' in msg:
             await message.channel.send(random.choice(meme))
             await message.channel.send(self.get_meme())
 
-        if any(Nos in msg for Nos in banned_words):
+        # Eliminates any message with a banned word
+        if any(Nos in msg for Nos in self.banned_words):
         # Deleting the message
             await message.delete()
             await message.channel.send(f'{message.author.mention}, YOU CAN\'T USE THE N WORD HERE!!!!')
 
-        if msg.strip() in calls:
+        # Let's itself get knowed, in case 
+        if msg.strip() in self.calls:
             await message.channel.send(random.choice(answers))
             await message.channel.send('If you need help with my commands, you can say \'Monday help\'')  
 
+        #Linea comentada porque 
         #await self.bot.process_commands(message)
     
+    ### Searches for memes in the url
     def get_meme(self):
         try:
             response = requests.get('https://meme-api.com/gimme')
