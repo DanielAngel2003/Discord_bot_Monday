@@ -4,6 +4,7 @@ import speech_recognition as sr
 import pyttsx3
 import datetime
 import sys
+import os
 
 # Inicializar el motor de voz
 engine = pyttsx3.init()
@@ -54,6 +55,8 @@ def active():
     elif  any(offs in comando for offs in ['apagar','apágate','apagado','fuera']):
         hablar('Saliendo del sistema')
         sys.exit()
+    elif any(his in comando for his in ['hola','saluda','saludo']):
+        hablar(f'Hola {os.getlogin()}. Gusto en Saludarte.')
     elif comando:
         hablar('Perdona, aún no tengo un comando para eso')
 
@@ -68,7 +71,6 @@ def keyword_await(keyword='asistente'):
             try:
                 audio = recognizer.listen(source, timeout=1)
                 texto = recognizer.recognize_google(audio, language='es-MX').lower()
-                print(f"Escuchado: {texto}")
                 if keyword in texto:
                     print("Palabra clave detectada.")
                     active()
