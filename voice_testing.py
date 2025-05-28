@@ -3,12 +3,29 @@
 import speech_recognition as sr
 import pyttsx3
 import datetime
+import sys
 
 # Inicializar el motor de voz
 engine = pyttsx3.init()
 
+# Obtener todas las voces disponibles
+voices = engine.getProperty('voices')
+"""
+Lista de Voces:
+Microsoft Helena Desktop
+Microsoft Zira Desktop
+Microsoft Sabina Desktop
+
+Parámetros: ID,Nombre,Idioma,Género
+"""
+select_voice = voices[2]
+select_voice.name = 'aurora'
+print(select_voice)
+
 def hablar(texto):
+    global select_voice
     print(f'Evening: {texto}')
+    engine.setProperty('voice', select_voice.id)
     engine.say(texto)
     engine.runAndWait()
 
@@ -27,14 +44,19 @@ def escuchar():
             return 'Error con reconocimiento'
 
 def active():
+    global select_voice
     # Ejemplo de funcionamiento
-    hablar("Hola, ¿en qué puedo ayudarte?")
+    hablar(f"Hola, soy {select_voice.name.capitalize()}. ¿En qué puedo ayudarte?") # Aurora, debido a que es sinónimo de Amanecer
     comando = escuchar()
-    if "hora" in comando:
+    if 'hora' in comando:
         hora = datetime.datetime.now().strftime("%H:%M")
         hablar(f"Son las {hora}")
-    elif comando: 
+    elif  any(offs in comando for offs in ['apagar','apágate','apagado','fuera']):
+        hablar('Saliendo del sistema')
+        sys.exit()
+    elif comando:
         hablar('Perdona, aún no tengo un comando para eso')
+
     else:
         hablar('No escuché ningún comando.')
 
@@ -44,11 +66,11 @@ def keyword_await(keyword='asistente'):
         print('Esperando Palabra Clave...')
         while True:
             try:
-                audio = recognizer.listen(source, timeout=5)
-                texto = recognizer.recognize_google(audio, language='es-ES').lower()
-                print(f"👂 Escuchado: {texto}")
+                audio = recognizer.listen(source, timeout=1)
+                texto = recognizer.recognize_google(audio, language='es-MX').lower()
+                print(f"Escuchado: {texto}")
                 if keyword in texto:
-                    print("✅ Palabra clave detectada.")
+                    print("Palabra clave detectada.")
                     active()
                     print("Esperando nuevamente...")
             except sr.WaitTimeoutError:
@@ -56,10 +78,10 @@ def keyword_await(keyword='asistente'):
             except sr.UnknownValueError:
                 pass  # ruido o no se entendió
             except sr.RequestError:
-                print("❌ Error con la API de reconocimiento.")
+                print("Error con la API de reconocimiento.")
                 break
 
-keyword_await()
+keyword_await(select_voice.name)
 
 """
 26/05/2025:
