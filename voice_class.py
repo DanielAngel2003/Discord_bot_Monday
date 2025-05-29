@@ -25,8 +25,15 @@ class VoiceAssistant:
         return select_voice
 
     def greeting_per_hour(self):
-        #if dt.datetime.hour 
-        return 'buenos dias'
+        hora = dt.datetime.now().hour
+        if 5 <= hora < 12:
+            return "buenos dias"
+        elif 12 <= hora < 18:
+            return "buenas tardes"
+        elif 18 <= hora < 22:
+            return "buenas noches"
+        else:
+            return "buenas madrugadas"
 
     def hablar(self, texto):
         '''
@@ -41,8 +48,6 @@ class VoiceAssistant:
         Funcion para reconocer lo que se dice
         '''
         with self.microphone as source:
-            print('Escuchando...')
-            
             try:
                 audio = self.recognizer.listen(source,timeout=timeout)
                 texto = self.recognizer.recognize_google(audio, language='es-MX'.lower())
@@ -71,8 +76,8 @@ class VoiceAssistant:
         elif  any(offs in comando for offs in ['apagar','apágate','apagado','fuera']):
             self.hablar('Saliendo del sistema')
             sys.exit()
-        elif any(his in comando for his in ['hola','saluda','saludo']):
-            self.hablar(f'Hola {os.getlogin()}. Gusto en Saludarte.')
+        elif any(his in comando for his in ['hola','saluda','saludo', self.greetings.lower()]):
+            self.hablar(f'{self.greetings.capitalize()} {os.getlogin()}. Gusto en Saludarte.')
         elif comando:
             self.hablar('Perdona, aún no tengo un comando para eso')
         else:
@@ -80,7 +85,6 @@ class VoiceAssistant:
 
     def esperar_keyword(self):
         self.hablar(f'{self.greetings.capitalize()}, {os.getlogin()}. Di mi nombre cuando me necesites')
-        print(f'keyword: {self.activation_word}')
         while True:
             texto = self.escuchar(timeout=1)
             if self.activation_word in texto:
