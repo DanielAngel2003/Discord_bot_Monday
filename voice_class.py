@@ -10,4 +10,87 @@ class VoiceAssistant:
         self.recognizer = sr.Recognizer()
         self.microphone = sr.Microphone()
         self.voice_commands_on = True
-        
+        self.select_voice = self.set_female_voice()
+        self.activation_word = self.select_voice.name
+        self.greetings = self.greeting_per_hour()
+
+    def set_female_voice(self):
+        '''
+        Selección de la voz a utilizar (en este caso, femenina)
+        '''
+        voices = self.engine.getProperty('voices')        
+        select_voice = voices[2]
+        select_voice.name = 'aurora'
+        self.engine.setProperty('voice', select_voice.id)
+        return select_voice
+
+    def greeting_per_hour(self):
+        #if dt.datetime.hour 
+        return 'buenos dias'
+
+    def hablar(self, texto):
+        '''
+        Función para que pueda hablar
+        '''
+        print(f'Aurora: {texto}')
+        self.engine.say(texto)
+        self.engine.runAndWait()
+
+    def escuchar(self, timeout=5):
+        '''
+        Funcion para reconocer lo que se dice
+        '''
+        with self.microphone as source:
+            print('Escuchando...')
+            
+            try:
+                audio = self.recognizer.listen(source,timeout=timeout)
+                texto = self.recognizer.recognize_google(audio, language='es-MX'.lower())
+                return texto.lower()
+            except sr.WaitTimeoutError:
+                pass # Tiempo prolongado o silencio prolongado, se ignora
+                return ''
+            except sr.UnknownValueError:
+                 return '' # Ruido /Inentendible 
+            except sr.RequestError:
+                print('Error con API de reconocimiento')
+                return texto
+            
+    def activar_comandos(self):
+        self.voice_commands_on = True
+        self.hablar('Activando comandos de voz')
+
+    def desactivar_comandos(self):
+        self.voice_commands_on = False
+        self.hablar('Desactivando comandos de voz')
+
+    def accion_comando(self, comando):
+        if 'hora' in comando:
+            hora = dt.datetime.now().strftime("%H:%M")
+            self.hablar(f"Son las {hora}")
+        elif  any(offs in comando for offs in ['apagar','apágate','apagado','fuera']):
+            self.hablar('Saliendo del sistema')
+            sys.exit()
+        elif any(his in comando for his in ['hola','saluda','saludo']):
+            self.hablar(f'Hola {os.getlogin()}. Gusto en Saludarte.')
+        elif comando:
+            self.hablar('Perdona, aún no tengo un comando para eso')
+        else:
+            self.hablar('No escuché ningún comando.')
+
+    def esperar_keyword(self):
+        self.hablar(f'{self.greetings.capitalize()}, {os.getlogin()}. Di mi nombre cuando me necesites')
+        print(f'keyword: {self.activation_word}')
+        while True:
+            texto = self.escuchar(timeout=1)
+            if self.activation_word in texto:
+                print('Se detectó palabra clave')
+                self.hablar(f"Hola, soy {self.select_voice.name.capitalize()}. ¿En qué puedo ayudarte?") # Aurora, debido a que es sinónimo de Amanecer
+                comando = self.escuchar()
+                self.accion_comando(comando)
+            else:
+                pass
+
+if __name__ == "__main__":
+    asistente = VoiceAssistant()
+    asistente.esperar_keyword()
