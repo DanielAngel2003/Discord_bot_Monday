@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import pyttsx3 as px3
 import datetime as dt
+from rapidfuzz import fuzz
 import sys
 import os 
 import time
@@ -41,6 +42,31 @@ class VoiceAssistant:
             return "buenas noches"
         else:
             return "buenas madrugadas"
+
+    def fuzzy_command(self, texto, umbral=70):
+        '''
+        Devuelve True si el texto supera el umbral de semejanza con una
+        palabra clave
+        '''
+        for kw in self.keywords:
+            similitud = fuzz.partial_ratio(kw, texto)
+            if similitud >= umbral:
+                print(f'Fuzzy detected: \'{kw}\' = \'{texto}\' ({similitud}%)')
+                return True
+        return False
+    
+    def fuzzy_name(self,texto,umbral=70):
+        '''
+        Devuelve True si el texto supera el umbral de semejanza
+        con el nombre
+        '''
+        name = self.select_voice.name
+
+        similitud = fuzz.partial_ratio(name, texto)
+        if similitud >= umbral:
+            print(f'Fuzzy detected: \'{name}\' = \'{texto}\' ({similitud}%)')
+            return True
+        return False
 
     def hablar(self, texto):
         '''
@@ -100,18 +126,21 @@ class VoiceAssistant:
 
             texto = texto.lower()
             print(texto)
-            if self.activation_word in texto:
+
+            if self.activation_word in texto and self.fuzzy_name(texto):
                 if texto == self.select_voice.name.lower():
                     print('Se detectó palabra clave')
                     self.hablar(f"Hola, soy {self.select_voice.name.capitalize()}. ¿En qué puedo ayudarte?") 
                     comando = self.escuchar()
                     self.accion_comando(comando)
-                else:
+                elif self.fuzzy_command(texto):
                     print('Comando posiblemente encontrado')
                     self.accion_comando(texto)
-                    
+
+                else:
+                    continue
             else:
-                print('No palabra clave, comando ignorado')
+                print('no hay contenido relevante. Se ignora comando')
                 time.sleep(0.5)
 
 '''
