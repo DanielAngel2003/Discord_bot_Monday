@@ -3,6 +3,9 @@ import pyttsx3 as px3
 import datetime as dt
 import sys
 import os 
+import time
+
+from discord.ext import commands
 
 class VoiceAssistant:
     def __init__(self):
@@ -13,6 +16,7 @@ class VoiceAssistant:
         self.select_voice = self.set_female_voice()
         self.activation_word = self.select_voice.name
         self.greetings = self.greeting_per_hour()
+        self.keywords = ['hora','apagar','apágate','apagado','fuera','hola','saluda','saludo', self.greetings.lower()]
 
     def set_female_voice(self):
         '''
@@ -20,14 +24,17 @@ class VoiceAssistant:
         '''
         voices = self.engine.getProperty('voices')        
         select_voice = voices[2]
-        select_voice.name = 'aurora'
+        # Aurora, debido a que es sinónimo de Amanecer
+        #Alba: Amanecer también, 
+        select_voice.name = 'alba'
+
         self.engine.setProperty('voice', select_voice.id)
         return select_voice
 
     def greeting_per_hour(self):
         hora = dt.datetime.now().hour
         if 5 <= hora < 12:
-            return "buenos dias"
+            return "buenos días"
         elif 12 <= hora < 18:
             return "buenas tardes"
         elif 18 <= hora < 22:
@@ -39,17 +46,17 @@ class VoiceAssistant:
         '''
         Función para que pueda hablar
         '''
-        print(f'Aurora: {texto}')
+        print(f'{self.select_voice.name.capitalize()}: {texto}')
         self.engine.say(texto)
         self.engine.runAndWait()
 
-    def escuchar(self, timeout=5):
+    def escuchar(self, timeout=5, phrase_time=3):
         '''
         Funcion para reconocer lo que se dice
         '''
         with self.microphone as source:
             try:
-                audio = self.recognizer.listen(source,timeout=timeout)
+                audio = self.recognizer.listen(source,timeout=timeout, phrase_time_limit=phrase_time)
                 texto = self.recognizer.recognize_google(audio, language='es-MX'.lower())
                 return texto.lower()
             except sr.WaitTimeoutError:
@@ -86,14 +93,32 @@ class VoiceAssistant:
     def esperar_keyword(self):
         self.hablar(f'{self.greetings.capitalize()}, {os.getlogin()}. Di mi nombre cuando me necesites')
         while True:
-            texto = self.escuchar(timeout=1)
+            texto = self.escuchar(timeout=6)
+
+            if not texto:
+                continue
+
+            texto = texto.lower()
+            print(texto)
             if self.activation_word in texto:
-                print('Se detectó palabra clave')
-                self.hablar(f"Hola, soy {self.select_voice.name.capitalize()}. ¿En qué puedo ayudarte?") # Aurora, debido a que es sinónimo de Amanecer
-                comando = self.escuchar()
-                self.accion_comando(comando)
+                if texto == self.select_voice.name.lower():
+                    print('Se detectó palabra clave')
+                    self.hablar(f"Hola, soy {self.select_voice.name.capitalize()}. ¿En qué puedo ayudarte?") 
+                    comando = self.escuchar()
+                    self.accion_comando(comando)
+                else:
+                    print('Comando posiblemente encontrado')
+                    self.accion_comando(texto)
+                    
             else:
-                pass
+                print('No palabra clave, comando ignorado')
+                time.sleep(0.5)
+
+'''
+# Revisar como se utiliza
+async def setup(bot):
+    await bot.add_cog()
+'''
 
 if __name__ == "__main__":
     asistente = VoiceAssistant()
