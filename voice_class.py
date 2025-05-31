@@ -6,8 +6,6 @@ import sys
 import os 
 import time
 
-from discord.ext import commands
-
 class VoiceAssistant:
     def __init__(self):
         self.engine = px3.init()
@@ -27,7 +25,7 @@ class VoiceAssistant:
         select_voice = voices[2]
         # Aurora, debido a que es sinónimo de Amanecer
         #Alba: Amanecer también, 
-        select_voice.name = 'alba'
+        select_voice.name = 'monday'
 
         self.engine.setProperty('voice', select_voice.id)
         return select_voice
@@ -76,7 +74,7 @@ class VoiceAssistant:
         self.engine.say(texto)
         self.engine.runAndWait()
 
-    def escuchar(self, timeout=5, phrase_time=3):
+    def escuchar(self, timeout=5, phrase_time=5):
         '''
         Funcion para reconocer lo que se dice
         '''
@@ -119,7 +117,7 @@ class VoiceAssistant:
     def esperar_keyword(self):
         self.hablar(f'{self.greetings.capitalize()}, {os.getlogin()}. Di mi nombre cuando me necesites')
         while True:
-            texto = self.escuchar(timeout=6)
+            texto = self.escuchar(timeout=4)
 
             if not texto:
                 continue
@@ -140,7 +138,7 @@ class VoiceAssistant:
                 else:
                     continue
             else:
-                print('no hay contenido relevante. Se ignora comando')
+                #print('no hay contenido relevante. Se ignora comando')
                 time.sleep(0.5)
 
 '''
