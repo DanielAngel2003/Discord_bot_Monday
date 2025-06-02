@@ -25,7 +25,7 @@ class VoiceAssistant:
         select_voice = voices[2]
         # Aurora, debido a que es sinónimo de Amanecer
         #Alba: Amanecer también, 
-        select_voice.name = 'monday'
+        select_voice.name = 'alba'
 
         self.engine.setProperty('voice', select_voice.id)
         return select_voice
@@ -49,7 +49,7 @@ class VoiceAssistant:
         for kw in self.keywords:
             similitud = fuzz.partial_ratio(kw, texto)
             if similitud >= umbral:
-                print(f'Fuzzy detected: \'{kw}\' = \'{texto}\' ({similitud}%)')
+                #print(f'Fuzzy detected: \'{kw}\' = \'{texto}\' ({similitud}%)')
                 return True
         return False
     
@@ -62,7 +62,7 @@ class VoiceAssistant:
 
         similitud = fuzz.partial_ratio(name, texto)
         if similitud >= umbral:
-            print(f'Fuzzy detected: \'{name}\' = \'{texto}\' ({similitud}%)')
+            print(f'Fuzzy detected: \'{name}\' = \'{texto}\' ({similitud:.2f}%)')
             return True
         return False
 
@@ -123,7 +123,7 @@ class VoiceAssistant:
                 continue
 
             texto = texto.lower()
-            print(texto)
+            #print(texto)
 
             if self.activation_word in texto and self.fuzzy_name(texto):
                 if texto == self.select_voice.name.lower():

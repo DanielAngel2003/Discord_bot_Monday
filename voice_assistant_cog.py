@@ -12,4 +12,15 @@ class VoiceAssistantCog(commands.Cog):
         self.assistant_thread = None
         self.running = False
         
-        
+    @commands.command(name='asistente')
+    async def iniciar_asistente(self, ctx, arg=None):
+        '''
+        Comando para iniciar/detener asistente de voz
+        '''
+        pass
+
+        def run_assistant():
+            pass
+    
+async def setup(bot):
+    await(bot.add_cog(VoiceAssistantCog(bot)))
